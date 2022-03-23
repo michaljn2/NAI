@@ -2,7 +2,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -31,7 +30,7 @@ public class Main {
                     attributes[i - 1] = Double.parseDouble(splittedLine[i]);
                 }
                 trainIrises.add(new TrainIris(attributes, splittedLine[splittedLine.length - 1]));
-                allSpecies.add(splittedLine[splittedLine.length - 1]);
+                allSpecies.add(splittedLine[splittedLine.length-1]);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,13 +54,76 @@ public class Main {
         // wartosc poczatkowa wektora wag jest losowa
         double [] scaleVector = new double[trainIrises.get(0).attributes.length];
         for (int i = 0; i<scaleVector.length; i++){
-            scaleVector[i] = getRandomNumber(-5,5);
+            scaleVector[i] = getRandomNumber(0,5);
+        }
+        // uczenie perceptronu
+        Perceptron perceptron = new Perceptron(teta, learnParam, scaleVector, firstSpecies, secondSpecies);
+        // powtarzamy uczenie, aż ilosc dobrych odpowiedzi osiagnie 100%
+        int tests = 0;
+        int right = 1;
+        while(tests != right) {
+            tests = 0;
+            right = 0;
+            for (TrainIris trainIris : trainIrises) {
+                if (!trainIris.species.equals(firstSpecies) && !trainIris.species.equals(secondSpecies))
+                    continue;
+                int rightDecision;
+                if (trainIris.species.equals(firstSpecies))
+                    rightDecision = 1;
+                else
+                    rightDecision = 0;
+
+                int output = perceptron.getOutput(trainIris.attributes);
+                if (output != rightDecision) {
+                    perceptron.modifyTeta(rightDecision, output);
+                    perceptron.modifyScaleVector(rightDecision, output, trainIris.attributes);
+                }
+                else
+                    right++;
+                tests++;
+            }
+
+        }
+
+        // teraz zaczynamy testowanie
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("iristest.csv")));
+            String line;
+            int testCounter = 0;
+            int rightDecisions = 0;
+            boolean firstLoop = true;
+            while((line = br.readLine()) != null){
+                if (firstLoop){
+                    firstLoop = false;
+                    continue;
+                }
+                String [] splittedLine = line.split(",");
+                species = splittedLine[splittedLine.length - 1];
+                if (!species.equals(firstSpecies) && !species.equals(secondSpecies))
+                    continue;
+                double [] attributes = new double[splittedLine.length - 2];
+                for (int i = 1; i <= splittedLine.length - 2; i++){
+                    attributes[i - 1] = Double.parseDouble(splittedLine[i]);
+                }
+                int rightDecision;
+                if (species.equals(firstSpecies))
+                    rightDecision = 1;
+                else
+                    rightDecision = 0;
+
+                if (perceptron.getOutput(attributes) == rightDecision)
+                    rightDecisions++;
+                testCounter++;
+            }
+            System.out.println(rightDecisions + " : " + testCounter);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
     }
-    public static int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
+    public static double getRandomNumber(double min, double max) {
+        return  ((Math.random() * (max - min)) + min);
     }
 }
 class TrainIris{
@@ -77,14 +139,35 @@ class Perceptron{
     double teta;
     double learnParam;
     double[] scaleVector;
+    String positiveOutput;
+    String negativeOutput;
 
-    public Perceptron(double teta, double learnParam, double[] scaleVector) {
+    public Perceptron(double teta, double learnParam, double[] scaleVector, String positiveOutput, String negativeOutput) {
         this.teta = teta;
         this.learnParam = learnParam;
         this.scaleVector = scaleVector;
+        this.positiveOutput = positiveOutput;
+        this.negativeOutput = negativeOutput;
     }
 
-    public void modifyTeta(){
+    public int getOutput(double [] attributes){
+        double scalarProduct = 0;
+        for (int i = 0; i < attributes.length; i++){
+            scalarProduct+= attributes[i] * scaleVector[i];
+        }
+        if (scalarProduct >= this.teta)
+            return 1;
+        else
+            return 0;
+    }
 
+    public void modifyTeta(int rightDecision, int output){
+        this.teta = this.teta + ((output - rightDecision) * this.learnParam);
+    }
+
+    public void modifyScaleVector (int rightDecision, int output, double[] attributes){
+        for (int i = 0; i < this.scaleVector.length; i++){
+            this.scaleVector[i] = this.scaleVector[i] + ((rightDecision - output) * learnParam * attributes[i]);
+        }
     }
 }
