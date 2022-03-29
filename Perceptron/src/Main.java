@@ -10,6 +10,7 @@ public class Main {
     public static List<TrainIris> trainIrises;
     public static List<String> allSpecies;
     public static int attributesCount;
+    public static int trainLoops;
     public static void main(String[] args) {
         // rozpoczynam czytanie z pliku treningowego
         trainIrises = new ArrayList<>();
@@ -51,6 +52,9 @@ public class Main {
         double teta = scanner.nextDouble();
         System.out.println("Podaj wartosc parametru uczacego: ");
         double learnParam = scanner.nextDouble();
+        System.out.println("Podaj ilosc petli treningowych");
+        //uzytkownik podaje ilosc petli treningowych
+        trainLoops = scanner.nextInt();
         // wartosc poczatkowa wektora wag jest losowa
         double [] scaleVector = new double[trainIrises.get(0).attributes.length];
         for (int i = 0; i<scaleVector.length; i++){
@@ -58,12 +62,9 @@ public class Main {
         }
         // uczenie perceptronu
         Perceptron perceptron = new Perceptron(teta, learnParam, scaleVector, firstSpecies, secondSpecies);
-        // powtarzamy uczenie, aż ilosc dobrych odpowiedzi osiagnie 100%
-        int tests = 0;
-        int right = 1;
-        while(tests != right) {
-            tests = 0;
-            right = 0;
+        // powtarzamy uczenie tyle razy ile podal uzytkownik
+        int counter = 0;
+        while(counter < trainLoops) {
             for (TrainIris trainIris : trainIrises) {
                 if (!trainIris.species.equals(firstSpecies) && !trainIris.species.equals(secondSpecies))
                     continue;
@@ -78,12 +79,9 @@ public class Main {
                     perceptron.modifyTeta(rightDecision, output);
                     perceptron.modifyScaleVector(rightDecision, output, trainIris.attributes);
                 }
-                else
-                    right++;
-                tests++;
             }
-
-        }
+            counter++;
+       }
 
         // teraz zaczynamy testowanie
         try {
@@ -119,7 +117,8 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        GUI gui = new GUI();
+        gui.showGUI(perceptron, attributesCount, firstSpecies, secondSpecies);
 
     }
     public static double getRandomNumber(double min, double max) {
