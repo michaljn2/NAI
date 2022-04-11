@@ -1,0 +1,7 @@
+Koaxiálne káble sú vhodné na prenos analógových i digitálnych signálov. Napr. CATV pracuje v súčasnosti s analógovými signálmi, LAN s digitálnymi signálmi. Základnými kvalitatívnymi parametrami pre koaxiálny kábel sú útlm, termálny šum a v prípade, že je na kábli nasadený multiplexný systém pracujúci s frekvenčným delením, i intermodulačný šum. Aby sa dosiahla požadovaná kvalita prenosu na potrebnej úrovni, musí sa udržať na koaxiálnom kábli určitý odstup signálu od šumu. Na to slúžia dva nástroje:
+
+manipulácia s výkonom prenášaného signálu,
+manipulácia s dĺžkou zosilňovacích úsekov, t. j. so vzdialenosťou zosilňovačov na trase.
+Prvá možnosť sa obyčajne nevyužíva, pretože pri viacnásobných prenosoch vedie k zvýšeniu úrovne intermodulačného šumu, a tým i k zvýšeniu celkového výkonu šumu. Čo sa týka druhej možnosti, snažíme sa vždy používať čo najdlhšie zosilňovacie úseky, aby sa minimalizoval potrebný počet zosilňovačov. Typická dĺžka zosilňovacieho úseku je rádovo niekoľko km. Navyše, podobne ako pri krútenej dvojlinke, klesá s rastúcou frekvenciou prenášaného signálu.
+
+Súčasné konštrukcie koaxiálnych káblov umožňujú prenášať analógové signály do frekvencie okolo 400 MHz a digitálne signály do rýchlosti 800 Mbit/s. Dĺžka zosilňovacích úsekov, resp. opakovacích úsekov pri digitálnych prenosoch v takýchto prípadoch však klesne na cca 1,5 km.
