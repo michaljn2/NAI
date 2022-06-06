@@ -36,7 +36,7 @@ public class Main {
             groups.get(i).getIrises().add(irises.get(i));
         }
         // przypisuje reszte Irysow do losowo wybranej grupy
-        for (int i = k + 1; i < irises.size(); i++){
+        for (int i = k; i < irises.size(); i++){
             Random rand = new Random();
             groups.get(rand.nextInt(groups.size())).addIris(irises.get(i));
         }
